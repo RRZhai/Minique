@@ -8,3 +8,4 @@ class Follow(db.Model):
 
     follower = relationship('User', foreign_keys=[follower_id], back_populates='followed_users', lazy='joined')
     followed = relationship('User', foreign_keys=[followed_id], back_populates='followers', lazy='joined')
+

@@ -1,5 +1,6 @@
 from __init__ import db, validates, re, validates, relationship
 from werkzeug.security import generate_password_hash, check_password_hash
+from server.models.follows import Follow
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -33,11 +34,16 @@ class User(db.Model):
     
     def follow(self, user):
         if not self.is_following(user):
-            self.followed.append(user)
-    
+            f = Follow(follower_id=self.id, followed_id=user.id)
+            db.session.add(f)
+
     def unfollow(self, user):
-        if self.is_following(user):
-            self.followed.remove(user)
-    
+        f = Follow.query.filter_by(follower_id=self.id, followed_id=user.id).first()
+        if f:
+            db.session.delete(f)
+            
     def is_following(self, user):
-        return self.followed.filter(Follow.followed_id == user.id).count() > 0
+        return Follow.query.filter(Follow.follower_id == self.id, Follow.followed_id == user.id).count() > 0
+    
+    def is_followed_by(self, user):
+        return Follow.query.filter(Follow.follower_id == user.id, Follow.followed_id == self.id).count() > 0
