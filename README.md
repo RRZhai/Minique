@@ -1,5 +1,5 @@
 # Mindque
- 
+
 ## Learning Goals
  
 - Help to complete study goal efficiently.
